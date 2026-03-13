@@ -1,0 +1,1101 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FrameForge — FiveM Framework Builder</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f7f6f3;
+  --surface: #ffffff;
+  --surface2: #f0efe9;
+  --border: #e4e2d8;
+  --border2: #d4d2c6;
+  --ink: #1a1916;
+  --ink2: #6b6a63;
+  --ink3: #9b9a93;
+  --accent: #2563eb;
+  --accent-light: #eff6ff;
+  --accent2: #059669;
+  --accent2-light: #ecfdf5;
+  --warn: #d97706;
+  --warn-light: #fffbeb;
+  --red: #dc2626;
+  --radius: 12px;
+  --radius-sm: 8px;
+  --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 4px 16px rgba(0,0,0,0.04);
+  --shadow-lg: 0 8px 32px rgba(0,0,0,0.1), 0 2px 8px rgba(0,0,0,0.06);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { background: var(--bg); color: var(--ink); font-family: 'DM Sans', sans-serif; font-weight: 400; line-height: 1.6; }
+
+/* PAGES */
+.page { display: none; min-height: 100vh; }
+.page.active { display: block; }
+
+/* =================== NAV =================== */
+.nav {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(247,246,243,0.92);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 40px;
+  height: 60px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.nav-logo {
+  font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 800;
+  color: var(--ink); cursor: pointer; text-decoration: none;
+  display: flex; align-items: center; gap: 8px;
+}
+.nav-logo .dot { width: 8px; height: 8px; background: var(--accent); border-radius: 50%; }
+.nav-right { display: flex; align-items: center; gap: 12px; }
+.nav-link { font-size: 14px; color: var(--ink2); text-decoration: none; padding: 6px 12px; border-radius: var(--radius-sm); transition: all 0.15s; cursor: pointer; background: none; border: none; font-family: 'DM Sans', sans-serif; }
+.nav-link:hover { background: var(--surface2); color: var(--ink); }
+.btn { font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500; padding: 8px 18px; border-radius: var(--radius-sm); border: none; cursor: pointer; transition: all 0.15s; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; }
+.btn-outline { background: transparent; border: 1px solid var(--border2); color: var(--ink); }
+.btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+.btn-primary { background: var(--accent); color: white; }
+.btn-primary:hover { background: #1d4ed8; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(37,99,235,0.3); }
+.btn-lg { padding: 12px 28px; font-size: 15px; border-radius: var(--radius); }
+.btn-xl { padding: 14px 32px; font-size: 16px; border-radius: var(--radius); }
+
+/* =================== LANDING =================== */
+.hero {
+  padding: 80px 40px 100px;
+  max-width: 1200px; margin: 0 auto;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center;
+}
+.hero-eyebrow {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--accent-light); color: var(--accent);
+  font-size: 12px; font-weight: 500; font-family: 'DM Mono', monospace;
+  letter-spacing: 0.5px; padding: 6px 12px; border-radius: 999px;
+  margin-bottom: 24px;
+}
+.hero-eyebrow .pulse { width: 6px; height: 6px; background: var(--accent); border-radius: 50%; animation: pulse 2s infinite; }
+h1 { font-family: 'Syne', sans-serif; font-size: clamp(40px, 5vw, 60px); font-weight: 800; line-height: 1.1; letter-spacing: -1.5px; color: var(--ink); margin-bottom: 20px; }
+h1 .highlight { color: var(--accent); }
+.hero-sub { font-size: 17px; color: var(--ink2); line-height: 1.7; max-width: 480px; margin-bottom: 36px; }
+.hero-actions { display: flex; gap: 12px; align-items: center; margin-bottom: 48px; }
+.hero-trust { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--ink3); }
+.hero-trust strong { color: var(--ink2); }
+.avatars { display: flex; }
+.avatars .av { width: 28px; height: 28px; border-radius: 50%; border: 2px solid var(--bg); margin-right: -8px; font-size: 11px; display: flex; align-items: center; justify-content: center; font-weight: 600; color: white; }
+
+/* HERO VISUAL */
+.hero-visual {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+}
+.visual-header {
+  background: var(--surface2); border-bottom: 1px solid var(--border);
+  padding: 12px 16px; display: flex; align-items: center; gap: 8px;
+}
+.traffic { display: flex; gap: 5px; }
+.traffic span { width: 10px; height: 10px; border-radius: 50%; }
+.t-red { background: #ff5f57; } .t-yellow { background: #febc2e; } .t-green { background: #28c840; }
+.visual-title { font-size: 12px; color: var(--ink3); font-family: 'DM Mono', monospace; margin-left: 4px; }
+.visual-body { padding: 20px; }
+
+.wizard-preview { display: flex; flex-direction: column; gap: 12px; }
+.step-row { display: flex; align-items: center; gap: 10px; }
+.step-num { width: 24px; height: 24px; border-radius: 50%; background: var(--accent); color: white; font-size: 11px; font-weight: 600; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.step-num.done { background: var(--accent2); }
+.step-num.active { background: var(--accent); box-shadow: 0 0 0 3px var(--accent-light); }
+.step-num.inactive { background: var(--border2); color: var(--ink3); }
+.step-label { font-size: 13px; color: var(--ink); font-weight: 500; }
+.step-label.done { color: var(--ink3); text-decoration: line-through; }
+.step-label.inactive { color: var(--ink3); }
+.step-badge { margin-left: auto; font-size: 11px; font-family: 'DM Mono', monospace; padding: 2px 8px; border-radius: 999px; }
+.badge-done { background: var(--accent2-light); color: var(--accent2); }
+.badge-active { background: var(--accent-light); color: var(--accent); }
+
+.module-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; padding: 12px; background: var(--surface2); border-radius: var(--radius-sm); border: 1px solid var(--border); }
+.chip { font-size: 11px; font-weight: 500; padding: 4px 10px; border-radius: 999px; }
+.chip-blue { background: var(--accent-light); color: var(--accent); }
+.chip-green { background: var(--accent2-light); color: var(--accent2); }
+.chip-orange { background: var(--warn-light); color: var(--warn); }
+
+.code-preview { background: #0f1117; border-radius: var(--radius-sm); padding: 12px; margin-top: 4px; }
+.code-line { font-family: 'DM Mono', monospace; font-size: 11px; line-height: 1.8; }
+.code-comment { color: #4b5563; }
+.code-keyword { color: #93c5fd; }
+.code-string { color: #6ee7b7; }
+.code-fn { color: #fcd34d; }
+.code-var { color: #e2e8f0; }
+
+/* FEATURES */
+.features-section { padding: 80px 40px; max-width: 1200px; margin: 0 auto; }
+.section-label { font-size: 12px; font-weight: 500; font-family: 'DM Mono', monospace; color: var(--accent); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 12px; }
+h2 { font-family: 'Syne', sans-serif; font-size: clamp(32px, 4vw, 48px); font-weight: 800; letter-spacing: -1px; line-height: 1.1; margin-bottom: 16px; }
+.section-sub { font-size: 17px; color: var(--ink2); max-width: 500px; line-height: 1.7; margin-bottom: 56px; }
+.features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; background: var(--border); border-radius: var(--radius); overflow: hidden; border: 1px solid var(--border); }
+.feature-card { background: var(--surface); padding: 32px; transition: background 0.15s; }
+.feature-card:hover { background: var(--surface2); }
+.feature-icon { width: 40px; height: 40px; border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; font-size: 18px; margin-bottom: 16px; }
+.fi-blue { background: var(--accent-light); }
+.fi-green { background: var(--accent2-light); }
+.fi-orange { background: var(--warn-light); }
+.feature-title { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700; margin-bottom: 8px; }
+.feature-desc { font-size: 14px; color: var(--ink2); line-height: 1.6; }
+
+/* MODULES SECTION */
+.modules-section { padding: 80px 40px; background: var(--ink); }
+.modules-inner { max-width: 1200px; margin: 0 auto; }
+.modules-inner .section-label { color: #60a5fa; }
+.modules-inner h2 { color: white; }
+.modules-inner .section-sub { color: #9ca3af; }
+.modules-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 48px; }
+.module-card {
+  background: #1a1f2e; border: 1px solid #2a3040; border-radius: var(--radius);
+  padding: 20px; transition: all 0.2s; cursor: pointer;
+}
+.module-card:hover { border-color: var(--accent); background: #1e2540; transform: translateY(-2px); }
+.module-emoji { font-size: 24px; margin-bottom: 10px; }
+.module-name { font-size: 14px; font-weight: 600; color: white; margin-bottom: 4px; }
+.module-desc { font-size: 12px; color: #6b7280; line-height: 1.5; }
+.module-lines { font-family: 'DM Mono', monospace; font-size: 11px; color: #4b5563; margin-top: 10px; }
+
+/* PRICING */
+.pricing-section { padding: 80px 40px; max-width: 1200px; margin: 0 auto; }
+.pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 56px; }
+.pricing-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 32px; position: relative; transition: all 0.2s; }
+.pricing-card:hover { box-shadow: var(--shadow-lg); transform: translateY(-4px); }
+.pricing-card.featured { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent), var(--shadow-lg); }
+.featured-badge { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: var(--accent); color: white; font-size: 11px; font-weight: 600; padding: 4px 16px; border-radius: 999px; white-space: nowrap; font-family: 'DM Mono', monospace; }
+.plan-name { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 800; margin-bottom: 4px; }
+.plan-desc { font-size: 13px; color: var(--ink3); margin-bottom: 24px; }
+.plan-price { display: flex; align-items: flex-end; gap: 4px; margin-bottom: 8px; }
+.plan-price .amount { font-family: 'Syne', sans-serif; font-size: 48px; font-weight: 800; line-height: 1; }
+.plan-price .currency { font-size: 20px; font-weight: 600; color: var(--ink2); margin-bottom: 8px; }
+.plan-price .period { font-size: 14px; color: var(--ink3); margin-bottom: 8px; }
+.plan-billing { font-size: 12px; color: var(--ink3); margin-bottom: 28px; }
+.plan-features { list-style: none; display: flex; flex-direction: column; gap: 10px; margin-bottom: 28px; }
+.plan-features li { font-size: 14px; color: var(--ink2); display: flex; align-items: center; gap: 8px; }
+.plan-features li::before { content: '✓'; color: var(--accent2); font-weight: 700; flex-shrink: 0; }
+.plan-features li.no::before { content: '×'; color: var(--border2); }
+.plan-features li.no { color: var(--ink3); }
+.btn-plan { width: 100%; justify-content: center; }
+
+/* =================== AUTH =================== */
+.auth-page { min-height: 100vh; display: grid; grid-template-columns: 1fr 1fr; }
+.auth-left { background: var(--ink); padding: 80px; display: flex; flex-direction: column; justify-content: center; }
+.auth-left-logo { font-family: 'Syne', sans-serif; font-size: 24px; font-weight: 800; color: white; display: flex; align-items: center; gap: 8px; margin-bottom: 64px; }
+.auth-left-logo .dot { width: 10px; height: 10px; background: var(--accent); border-radius: 50%; }
+.auth-headline { font-family: 'Syne', sans-serif; font-size: 40px; font-weight: 800; color: white; line-height: 1.1; letter-spacing: -1px; margin-bottom: 16px; }
+.auth-headline span { color: #60a5fa; }
+.auth-tagline { font-size: 16px; color: #9ca3af; line-height: 1.7; margin-bottom: 48px; }
+.auth-perks { display: flex; flex-direction: column; gap: 16px; }
+.auth-perk { display: flex; align-items: center; gap: 12px; font-size: 14px; color: #d1d5db; }
+.auth-perk-icon { width: 32px; height: 32px; background: #1e2740; border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; }
+.auth-right { display: flex; align-items: center; justify-content: center; padding: 40px; background: var(--bg); }
+.auth-form-box { width: 100%; max-width: 400px; }
+.auth-form-title { font-family: 'Syne', sans-serif; font-size: 28px; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 6px; }
+.auth-form-sub { font-size: 14px; color: var(--ink2); margin-bottom: 32px; }
+.form-group { margin-bottom: 16px; }
+label { display: block; font-size: 13px; font-weight: 500; color: var(--ink2); margin-bottom: 6px; }
+input[type=text], input[type=email], input[type=password] {
+  width: 100%; padding: 10px 14px; border: 1px solid var(--border2);
+  border-radius: var(--radius-sm); font-family: 'DM Sans', sans-serif; font-size: 14px;
+  background: var(--surface); color: var(--ink); transition: border-color 0.15s;
+  outline: none;
+}
+input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(37,99,235,0.08); }
+.btn-form { width: 100%; justify-content: center; padding: 12px; font-size: 15px; margin-top: 8px; }
+.auth-switch { text-align: center; font-size: 13px; color: var(--ink3); margin-top: 20px; }
+.auth-switch a { color: var(--accent); cursor: pointer; text-decoration: none; font-weight: 500; }
+.auth-switch a:hover { text-decoration: underline; }
+.divider { display: flex; align-items: center; gap: 12px; margin: 20px 0; color: var(--ink3); font-size: 12px; }
+.divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+/* =================== DASHBOARD =================== */
+.dashboard-layout { display: grid; grid-template-columns: 240px 1fr; min-height: 100vh; }
+.sidebar { background: var(--surface); border-right: 1px solid var(--border); padding: 24px 0; display: flex; flex-direction: column; position: sticky; top: 0; height: 100vh; }
+.sidebar-logo { padding: 0 20px 24px; border-bottom: 1px solid var(--border); margin-bottom: 16px; font-family: 'Syne', sans-serif; font-size: 17px; font-weight: 800; color: var(--ink); display: flex; align-items: center; gap: 8px; cursor: pointer; }
+.sidebar-logo .dot { width: 8px; height: 8px; background: var(--accent); border-radius: 50%; }
+.sidebar-section-label { font-size: 10px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--ink3); padding: 0 20px 8px; font-family: 'DM Mono', monospace; }
+.sidebar-nav { list-style: none; padding: 0 8px; display: flex; flex-direction: column; gap: 2px; }
+.sidebar-item { padding: 9px 12px; border-radius: var(--radius-sm); font-size: 14px; color: var(--ink2); cursor: pointer; display: flex; align-items: center; gap: 10px; transition: all 0.15s; font-weight: 500; }
+.sidebar-item:hover { background: var(--surface2); color: var(--ink); }
+.sidebar-item.active { background: var(--accent-light); color: var(--accent); }
+.sidebar-item .icon { font-size: 15px; width: 20px; text-align: center; }
+.sidebar-bottom { margin-top: auto; padding: 16px 8px 0; border-top: 1px solid var(--border); }
+.sidebar-user { padding: 10px 12px; border-radius: var(--radius-sm); display: flex; align-items: center; gap: 10px; cursor: pointer; }
+.sidebar-user:hover { background: var(--surface2); }
+.user-avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--accent); color: white; font-size: 13px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.user-name { font-size: 13px; font-weight: 600; color: var(--ink); }
+.user-plan { font-size: 11px; color: var(--ink3); font-family: 'DM Mono', monospace; }
+
+/* MAIN */
+.main-content { padding: 32px 40px; background: var(--bg); }
+.page-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 32px; }
+.page-title { font-family: 'Syne', sans-serif; font-size: 26px; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 4px; }
+.page-subtitle { font-size: 14px; color: var(--ink2); }
+
+/* DASHBOARD OVERVIEW */
+.dash-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 32px; }
+.dash-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; }
+.dash-card-label { font-size: 12px; color: var(--ink3); font-family: 'DM Mono', monospace; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+.dash-card-value { font-family: 'Syne', sans-serif; font-size: 32px; font-weight: 800; color: var(--ink); margin-bottom: 4px; }
+.dash-card-change { font-size: 12px; color: var(--accent2); font-weight: 500; }
+
+/* PROJECT CARDS */
+.projects-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+.projects-title { font-size: 16px; font-weight: 600; }
+.projects-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+.project-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; cursor: pointer; transition: all 0.15s; }
+.project-card:hover { border-color: var(--accent); box-shadow: var(--shadow); transform: translateY(-2px); }
+.project-card-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 12px; }
+.project-name { font-size: 15px; font-weight: 600; }
+.project-status { font-size: 11px; font-family: 'DM Mono', monospace; padding: 3px 8px; border-radius: 999px; }
+.status-done { background: var(--accent2-light); color: var(--accent2); }
+.status-wip { background: var(--warn-light); color: var(--warn); }
+.status-draft { background: var(--surface2); color: var(--ink3); }
+.project-modules { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 12px; }
+.project-module-chip { font-size: 10px; padding: 2px 7px; border-radius: 999px; background: var(--surface2); color: var(--ink3); font-family: 'DM Mono', monospace; }
+.project-meta { font-size: 12px; color: var(--ink3); display: flex; align-items: center; gap: 12px; }
+.new-project-card { border: 2px dashed var(--border); border-radius: var(--radius); padding: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; cursor: pointer; transition: all 0.15s; min-height: 140px; background: transparent; }
+.new-project-card:hover { border-color: var(--accent); background: var(--accent-light); }
+.new-project-icon { font-size: 28px; color: var(--ink3); }
+.new-project-label { font-size: 14px; color: var(--ink3); font-weight: 500; }
+
+/* =================== WIZARD =================== */
+.wizard-page { padding: 32px 40px; background: var(--bg); min-height: 100vh; }
+.wizard-header { max-width: 800px; margin: 0 auto 40px; }
+.wizard-back { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--ink3); cursor: pointer; margin-bottom: 24px; background: none; border: none; font-family: 'DM Sans', sans-serif; transition: color 0.15s; }
+.wizard-back:hover { color: var(--ink); }
+.wizard-progress { display: flex; align-items: center; gap: 0; margin-bottom: 32px; }
+.wp-step { display: flex; align-items: center; gap: 8px; flex: 1; }
+.wp-dot { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; flex-shrink: 0; transition: all 0.3s; }
+.wp-dot.done { background: var(--accent2); color: white; }
+.wp-dot.active { background: var(--accent); color: white; box-shadow: 0 0 0 4px rgba(37,99,235,0.15); }
+.wp-dot.inactive { background: var(--border); color: var(--ink3); }
+.wp-label { font-size: 12px; font-weight: 500; color: var(--ink3); white-space: nowrap; }
+.wp-label.active { color: var(--accent); }
+.wp-label.done { color: var(--accent2); }
+.wp-line { flex: 1; height: 2px; background: var(--border); margin: 0 8px; }
+.wp-line.done { background: var(--accent2); }
+
+.wizard-body { max-width: 800px; margin: 0 auto; }
+.wizard-step { display: none; }
+.wizard-step.active { display: block; }
+.step-title { font-family: 'Syne', sans-serif; font-size: 28px; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 8px; }
+.step-desc { font-size: 15px; color: var(--ink2); margin-bottom: 32px; line-height: 1.6; }
+
+/* MODULE SELECT */
+.modules-select-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 32px; }
+.module-select-card { background: var(--surface); border: 2px solid var(--border); border-radius: var(--radius); padding: 16px; cursor: pointer; transition: all 0.15s; text-align: center; user-select: none; }
+.module-select-card:hover { border-color: var(--accent); }
+.module-select-card.selected { border-color: var(--accent); background: var(--accent-light); }
+.ms-emoji { font-size: 28px; margin-bottom: 8px; }
+.ms-name { font-size: 13px; font-weight: 600; color: var(--ink); margin-bottom: 3px; }
+.ms-lines { font-size: 11px; color: var(--ink3); font-family: 'DM Mono', monospace; }
+
+/* CONFIG STEP */
+.config-section { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; margin-bottom: 16px; }
+.config-section-title { font-size: 15px; font-weight: 600; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+.config-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.config-item { display: flex; flex-direction: column; gap: 6px; }
+.config-label { font-size: 13px; font-weight: 500; color: var(--ink2); }
+select { width: 100%; padding: 9px 12px; border: 1px solid var(--border2); border-radius: var(--radius-sm); font-family: 'DM Sans', sans-serif; font-size: 14px; background: var(--surface); color: var(--ink); outline: none; cursor: pointer; }
+select:focus { border-color: var(--accent); }
+.toggle-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border); }
+.toggle-row:last-child { border-bottom: none; }
+.toggle-label { font-size: 14px; color: var(--ink); }
+.toggle { position: relative; width: 40px; height: 22px; }
+.toggle input { opacity: 0; width: 0; height: 0; }
+.toggle-slider { position: absolute; inset: 0; background: var(--border2); border-radius: 999px; cursor: pointer; transition: 0.2s; }
+.toggle-slider::before { content: ''; position: absolute; width: 16px; height: 16px; background: white; border-radius: 50%; top: 3px; left: 3px; transition: 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+.toggle input:checked + .toggle-slider { background: var(--accent); }
+.toggle input:checked + .toggle-slider::before { transform: translateX(18px); }
+
+/* GENERATE STEP */
+.generate-box { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; margin-bottom: 24px; }
+.generate-header { padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+.generate-title { font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+.gen-badge { font-size: 10px; font-family: 'DM Mono', monospace; padding: 3px 8px; border-radius: 999px; background: var(--accent-light); color: var(--accent); }
+.generate-body { padding: 20px; background: #0f1117; min-height: 300px; position: relative; }
+.gen-code { font-family: 'DM Mono', monospace; font-size: 12px; line-height: 1.8; color: #e2e8f0; white-space: pre-wrap; }
+.gen-placeholder { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 260px; gap: 12px; }
+.gen-spinner { width: 36px; height: 36px; border: 3px solid #2a3040; border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; display: none; }
+.gen-spinner.active { display: block; }
+.gen-idle-text { font-size: 14px; color: #6b7280; text-align: center; }
+.gen-idle-sub { font-size: 12px; color: #4b5563; text-align: center; }
+.generate-footer { padding: 12px 20px; border-top: 1px solid #1e2535; display: flex; align-items: center; justify-content: space-between; background: #0f1117; }
+.gen-file-label { font-family: 'DM Mono', monospace; font-size: 11px; color: #4b5563; }
+.copy-btn { font-family: 'DM Mono', monospace; font-size: 11px; color: #60a5fa; background: none; border: 1px solid #2a3040; padding: 4px 12px; border-radius: var(--radius-sm); cursor: pointer; transition: all 0.15s; }
+.copy-btn:hover { background: #1e2535; }
+
+/* SUMMARY STEP */
+.summary-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; margin-bottom: 16px; }
+.summary-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 14px; }
+.summary-row:last-child { border-bottom: none; }
+.summary-key { color: var(--ink3); font-family: 'DM Mono', monospace; font-size: 12px; }
+.summary-val { font-weight: 500; color: var(--ink); }
+
+/* DOWNLOAD BOX */
+.download-box { background: var(--accent-light); border: 1px solid rgba(37,99,235,0.2); border-radius: var(--radius); padding: 24px; text-align: center; }
+.download-icon { font-size: 36px; margin-bottom: 12px; }
+.download-title { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 800; margin-bottom: 6px; }
+.download-desc { font-size: 14px; color: var(--ink2); margin-bottom: 20px; }
+
+/* WIZARD FOOTER */
+.wizard-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 32px; padding-top: 24px; border-top: 1px solid var(--border); }
+.step-counter { font-size: 13px; color: var(--ink3); font-family: 'DM Mono', monospace; }
+.wizard-nav { display: flex; gap: 12px; }
+
+/* ANIMATIONS */
+@keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(0.8); } }
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes load { 0% { width: 0%; } 50% { width: 75%; } 100% { width: 100%; } }
+@keyframes typing { from { width: 0 } to { width: 100% } }
+
+.fade-in { animation: fadeIn 0.4s ease both; }
+
+/* NOTIFICATION */
+.toast { position: fixed; bottom: 24px; right: 24px; background: var(--ink); color: white; padding: 12px 20px; border-radius: var(--radius); font-size: 14px; font-weight: 500; z-index: 9999; display: none; animation: fadeIn 0.3s ease; }
+.toast.show { display: block; }
+
+/* SCROLLBAR */
+::-webkit-scrollbar { width: 6px; } ::-webkit-scrollbar-track { background: transparent; } ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 999px; }
+</style>
+</head>
+<body>
+
+<!-- =================== TOAST =================== -->
+<div class="toast" id="toast"></div>
+
+<!-- =================== LANDING PAGE =================== -->
+<div class="page active" id="page-landing">
+  <nav class="nav">
+    <a class="nav-logo" onclick="showPage('page-landing')">
+      <div class="dot"></div>
+      FrameForge
+    </a>
+    <ul class="nav-links" style="list-style:none;display:flex;gap:4px;">
+      <li><a class="nav-link" onclick="scrollTo({top:document.getElementById('features').offsetTop-80,behavior:'smooth'})">Features</a></li>
+      <li><a class="nav-link" onclick="scrollTo({top:document.getElementById('modules-sec').offsetTop-80,behavior:'smooth'})">Modules</a></li>
+      <li><a class="nav-link" onclick="scrollTo({top:document.getElementById('pricing').offsetTop-80,behavior:'smooth'})">Pricing</a></li>
+    </ul>
+    <div class="nav-right">
+      <button class="btn btn-outline" onclick="showPage('page-login')">Inloggen</button>
+      <button class="btn btn-primary" onclick="showPage('page-register')">Gratis starten</button>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-left fade-in">
+      <div class="hero-eyebrow"><div class="pulse"></div> AI-Powered Code Generator</div>
+      <h1>Bouw je FiveM<br><span class="highlight">framework</span><br>in minuten.</h1>
+      <p class="hero-sub">FrameForge genereert een volledig custom FiveM framework op basis van jouw keuzes. Van job systemen tot criminal networks — productieklare Lua code, direct te downloaden.</p>
+      <div class="hero-actions">
+        <button class="btn btn-primary btn-xl" onclick="showPage('page-register')">Start gratis →</button>
+        <button class="btn btn-outline btn-xl" onclick="scrollTo({top:document.getElementById('features').offsetTop-80,behavior:'smooth'})">Bekijk demo</button>
+      </div>
+      <div class="hero-trust">
+        <div class="avatars">
+          <div class="av" style="background:#6366f1">J</div>
+          <div class="av" style="background:#f59e0b">M</div>
+          <div class="av" style="background:#10b981">R</div>
+          <div class="av" style="background:#ef4444">K</div>
+        </div>
+        <span>Vertrouwd door <strong>340+ server owners</strong></span>
+      </div>
+    </div>
+
+    <div class="hero-right fade-in" style="animation-delay:0.15s">
+      <div class="hero-visual">
+        <div class="visual-header">
+          <div class="traffic"><span class="t-red"></span><span class="t-yellow"></span><span class="t-green"></span></div>
+          <span class="visual-title">FrameForge — Builder</span>
+        </div>
+        <div class="visual-body">
+          <div class="wizard-preview">
+            <div class="step-row"><div class="step-num done">✓</div><span class="step-label done">Server info</span><span class="step-badge badge-done">Klaar</span></div>
+            <div class="step-row"><div class="step-num done">✓</div><span class="step-label done">Modules selecteren</span><span class="step-badge badge-done">8 modules</span></div>
+            <div class="step-row"><div class="step-num active">3</div><span class="step-label">Genereren</span><span class="step-badge badge-active">Bezig...</span></div>
+            <div class="module-chips">
+              <span class="chip chip-blue">👔 Jobs</span>
+              <span class="chip chip-green">🚗 Voertuigen</span>
+              <span class="chip chip-blue">🎒 Inventory</span>
+              <span class="chip chip-orange">💰 Banking</span>
+              <span class="chip chip-blue">🚔 Politie MDT</span>
+              <span class="chip chip-green">🏠 Housing</span>
+            </div>
+            <div class="code-preview">
+              <div class="code-line"><span class="code-comment">-- Generated by FrameForge</span></div>
+              <div class="code-line"><span class="code-keyword">local</span> <span class="code-var">Framework</span> = {}</div>
+              <div class="code-line"><span class="code-var">Framework</span>.<span class="code-fn">Jobs</span> = <span class="code-keyword">require</span>(<span class="code-string">'modules.jobs'</span>)</div>
+              <div class="code-line"><span class="code-var">Framework</span>.<span class="code-fn">Economy</span> = <span class="code-keyword">require</span>(<span class="code-string">'modules.banking'</span>)</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FEATURES -->
+  <div id="features" class="features-section">
+    <div class="section-label">Features</div>
+    <h2>Alles wat je nodig <em>hebt</em></h2>
+    <p class="section-sub">Van wizard tot download — FrameForge handelt het allemaal af zodat jij je server kan lanceren.</p>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon fi-blue">🧠</div>
+        <div class="feature-title">AI Code Generator</div>
+        <div class="feature-desc">Onze AI schrijft productieklare Lua code op basis van jouw keuzes. Geen boilerplate, geen kopiëren.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon fi-green">⚡</div>
+        <div class="feature-title">Wizard Interface</div>
+        <div class="feature-desc">Stap-voor-stap door je configuratie. Kies modules, stel opties in, en download in 5 minuten.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon fi-orange">📦</div>
+        <div class="feature-title">8 Kant-en-klare modules</div>
+        <div class="feature-desc">Van job systemen tot criminal networks. Elke module is zorgvuldig gebouwd en geoptimaliseerd.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon fi-blue">🔧</div>
+        <div class="feature-title">Volledig aanpasbaar</div>
+        <div class="feature-desc">Stel database namen, permissies, discord webhooks en meer in via de config wizard.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon fi-green">📁</div>
+        <div class="feature-title">ZIP Download</div>
+        <div class="feature-desc">Ontvang een kant-en-klare map structuur die direct in je FiveM server resources folder werkt.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon fi-orange">🔄</div>
+        <div class="feature-title">Onbeperkte updates</div>
+        <div class="feature-desc">Pas je framework altijd aan en regenereer. Je projecten worden opgeslagen in je dashboard.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULES -->
+  <div id="modules-sec" class="modules-section">
+    <div class="modules-inner">
+      <div class="section-label">Modules</div>
+      <h2>Wat wordt er gegenereerd?</h2>
+      <p class="section-sub">Elke module is een volledig zelfstandig Lua pakket met client, server en config bestanden.</p>
+      <div class="modules-grid">
+        <div class="module-card"><div class="module-emoji">👔</div><div class="module-name">Job Systeem</div><div class="module-desc">Volledig job framework met grades, lonen en whitelist</div><div class="module-lines">~420 regels Lua</div></div>
+        <div class="module-card"><div class="module-emoji">🚗</div><div class="module-name">Voertuig Beheer</div><div class="module-desc">Spawnen, opslaan, keys en garage systeem</div><div class="module-lines">~380 regels Lua</div></div>
+        <div class="module-card"><div class="module-emoji">🎒</div><div class="module-name">Inventory</div><div class="module-desc">Grid inventory met items, weight en hotbar</div><div class="module-lines">~560 regels Lua</div></div>
+        <div class="module-card"><div class="module-emoji">💰</div><div class="module-name">Economie</div><div class="module-desc">Banking, ATM, transfers en transactie logs</div><div class="module-lines">~290 regels Lua</div></div>
+        <div class="module-card"><div class="module-emoji">🚔</div><div class="module-name">Politie MDT</div><div class="module-desc">Dispatch, dossiers, boetes en ANPR systeem</div><div class="module-lines">~680 regels Lua</div></div>
+        <div class="module-card"><div class="module-emoji">💀</div><div class="module-name">Crimineel Systeem</div><div class="module-desc">Drugsroutes, heists en gang territories</div><div class="module-lines">~500 regels Lua</div></div>
+        <div class="module-card"><div class="module-emoji">🏠</div><div class="module-name">Housing</div><div class="module-desc">Huizen kopen, verkopen en interieur aanpassen</div><div class="module-lines">~450 regels Lua</div></div>
+        <div class="module-card"><div class="module-emoji">👤</div><div class="module-name">Character Creation</div><div class="module-desc">Multi-character met appearance editor en backstory</div><div class="module-lines">~340 regels Lua</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PRICING -->
+  <div id="pricing" class="pricing-section">
+    <div class="section-label">Pricing</div>
+    <h2>Eenvoudige <em>pricing</em></h2>
+    <p class="section-sub">Geen verborgen kosten. Betaal per maand, stop wanneer je wil.</p>
+    <div class="pricing-grid">
+      <div class="pricing-card">
+        <div class="plan-name">Starter</div>
+        <div class="plan-desc">Voor hobbyisten & kleine servers</div>
+        <div class="plan-price"><span class="currency">€</span><span class="amount">9</span><span class="period">/mo</span></div>
+        <div class="plan-billing">€9 per maand, maandelijks opzegbaar</div>
+        <ul class="plan-features">
+          <li>3 projecten</li>
+          <li>4 modules per project</li>
+          <li>ZIP download</li>
+          <li>Community support</li>
+          <li class="no">Onbeperkte regeneraties</li>
+          <li class="no">Prioriteit support</li>
+        </ul>
+        <button class="btn btn-outline btn-plan" onclick="showPage('page-register')">Start met Starter</button>
+      </div>
+      <div class="pricing-card featured">
+        <div class="featured-badge">⚡ Meest gekozen</div>
+        <div class="plan-name">Pro</div>
+        <div class="plan-desc">Voor serieuze server owners</div>
+        <div class="plan-price"><span class="currency">€</span><span class="amount">19</span><span class="period">/mo</span></div>
+        <div class="plan-billing">€19 per maand, maandelijks opzegbaar</div>
+        <ul class="plan-features">
+          <li>Onbeperkte projecten</li>
+          <li>Alle 8 modules</li>
+          <li>ZIP download</li>
+          <li>Onbeperkte regeneraties</li>
+          <li>Email support</li>
+          <li class="no">Whitelabel output</li>
+        </ul>
+        <button class="btn btn-primary btn-plan" onclick="showPage('page-register')">Start met Pro</button>
+      </div>
+      <div class="pricing-card">
+        <div class="plan-name">Studio</div>
+        <div class="plan-desc">Voor developers & agencies</div>
+        <div class="plan-price"><span class="currency">€</span><span class="amount">49</span><span class="period">/mo</span></div>
+        <div class="plan-billing">€49 per maand, maandelijks opzegbaar</div>
+        <ul class="plan-features">
+          <li>Alles in Pro</li>
+          <li>Whitelabel output</li>
+          <li>API toegang</li>
+          <li>Prioriteit support</li>
+          <li>Custom module requests</li>
+          <li>Team leden (max 5)</li>
+        </ul>
+        <button class="btn btn-outline btn-plan" onclick="showPage('page-register')">Start met Studio</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- =================== LOGIN =================== -->
+<div class="page" id="page-login">
+  <div class="auth-page">
+    <div class="auth-left">
+      <div class="auth-left-logo"><div class="dot"></div> FrameForge</div>
+      <div class="auth-headline">Welkom <span>terug.</span></div>
+      <p class="auth-tagline">Log in en ga verder met je framework. Je projecten wachten op je.</p>
+      <div class="auth-perks">
+        <div class="auth-perk"><div class="auth-perk-icon">⚡</div> Projecten worden automatisch opgeslagen</div>
+        <div class="auth-perk"><div class="auth-perk-icon">📦</div> Download je gegenereerde code altijd opnieuw</div>
+        <div class="auth-perk"><div class="auth-perk-icon">🔄</div> Regenereer met nieuwe instellingen</div>
+      </div>
+    </div>
+    <div class="auth-right">
+      <div class="auth-form-box fade-in">
+        <div class="auth-form-title">Inloggen</div>
+        <div class="auth-form-sub">Nog geen account? <a onclick="showPage('page-register')">Registreer gratis</a></div>
+        <div class="form-group"><label>E-mailadres</label><input type="email" placeholder="jij@server.nl" id="login-email"></div>
+        <div class="form-group"><label>Wachtwoord</label><input type="password" placeholder="••••••••" id="login-password"></div>
+        <button class="btn btn-primary btn-form" onclick="doLogin()">Inloggen →</button>
+        <div class="auth-switch">Terug naar <a onclick="showPage('page-landing')">homepage</a></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- =================== REGISTER =================== -->
+<div class="page" id="page-register">
+  <div class="auth-page">
+    <div class="auth-left">
+      <div class="auth-left-logo"><div class="dot"></div> FrameForge</div>
+      <div class="auth-headline">Bouw je <span>droomserver.</span></div>
+      <p class="auth-tagline">Maak een gratis account aan en start vandaag met bouwen. Geen creditcard nodig.</p>
+      <div class="auth-perks">
+        <div class="auth-perk"><div class="auth-perk-icon">🆓</div> Gratis te starten, geen creditcard nodig</div>
+        <div class="auth-perk"><div class="auth-perk-icon">⚡</div> In 5 minuten je eerste framework klaar</div>
+        <div class="auth-perk"><div class="auth-perk-icon">🧠</div> AI schrijft productieklare Lua code</div>
+      </div>
+    </div>
+    <div class="auth-right">
+      <div class="auth-form-box fade-in">
+        <div class="auth-form-title">Account aanmaken</div>
+        <div class="auth-form-sub">Al een account? <a onclick="showPage('page-login')">Inloggen</a></div>
+        <div class="form-group"><label>Naam</label><input type="text" placeholder="Jouw naam" id="reg-name"></div>
+        <div class="form-group"><label>E-mailadres</label><input type="email" placeholder="jij@server.nl" id="reg-email"></div>
+        <div class="form-group"><label>Wachtwoord</label><input type="password" placeholder="Min. 8 tekens" id="reg-password"></div>
+        <button class="btn btn-primary btn-form" onclick="doRegister()">Account aanmaken →</button>
+        <div class="auth-switch">Terug naar <a onclick="showPage('page-landing')">homepage</a></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- =================== DASHBOARD =================== -->
+<div class="page" id="page-dashboard">
+  <div class="dashboard-layout">
+    <div class="sidebar">
+      <div class="sidebar-logo" onclick="showPage('page-dashboard')"><div class="dot"></div> FrameForge</div>
+      <div class="sidebar-section-label">Menu</div>
+      <ul class="sidebar-nav">
+        <li class="sidebar-item active" onclick="switchTab('tab-overview', this)"><span class="icon">🏠</span> Dashboard</li>
+        <li class="sidebar-item" onclick="switchTab('tab-projects', this)"><span class="icon">📁</span> Projecten</li>
+        <li class="sidebar-item" onclick="startWizard()"><span class="icon">✨</span> Nieuw framework</li>
+        <li class="sidebar-item" onclick="switchTab('tab-billing', this)"><span class="icon">💳</span> Abonnement</li>
+        <li class="sidebar-item" onclick="switchTab('tab-settings', this)"><span class="icon">⚙️</span> Instellingen</li>
+      </ul>
+      <div class="sidebar-bottom">
+        <div class="sidebar-user">
+          <div class="user-avatar" id="user-avatar">J</div>
+          <div>
+            <div class="user-name" id="user-display-name">Gebruiker</div>
+            <div class="user-plan">Pro Plan</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="main-content">
+      <!-- OVERVIEW TAB -->
+      <div id="tab-overview" class="dashboard-tab">
+        <div class="page-header">
+          <div>
+            <div class="page-title" id="welcome-title">Welkom terug 👋</div>
+            <div class="page-subtitle">Hier is een overzicht van je activiteit.</div>
+          </div>
+          <button class="btn btn-primary" onclick="startWizard()">+ Nieuw framework</button>
+        </div>
+        <div class="dash-grid">
+          <div class="dash-card"><div class="dash-card-label">Projecten</div><div class="dash-card-value">3</div><div class="dash-card-change">↑ 1 deze maand</div></div>
+          <div class="dash-card"><div class="dash-card-label">Gegenereerde modules</div><div class="dash-card-value">14</div><div class="dash-card-change">↑ 6 deze week</div></div>
+          <div class="dash-card"><div class="dash-card-label">Regels Lua code</div><div class="dash-card-value">4.2k</div><div class="dash-card-change">↑ 1.8k nieuw</div></div>
+        </div>
+        <div class="projects-header"><div class="projects-title">Recente projecten</div><button class="btn btn-outline" style="font-size:13px;padding:7px 14px" onclick="switchTab('tab-projects', null)">Alle projecten</button></div>
+        <div class="projects-grid">
+          <div class="project-card" onclick="startWizard()">
+            <div class="project-card-top"><div class="project-name">NightCity RP</div><span class="project-status status-done">Klaar</span></div>
+            <div class="project-modules"><span class="project-module-chip">Jobs</span><span class="project-module-chip">Politie MDT</span><span class="project-module-chip">Housing</span><span class="project-module-chip">+3</span></div>
+            <div class="project-meta"><span>6 modules</span><span>·</span><span>2 dagen geleden</span></div>
+          </div>
+          <div class="project-card" onclick="startWizard()">
+            <div class="project-card-top"><div class="project-name">SunCity Server</div><span class="project-status status-wip">In bewerking</span></div>
+            <div class="project-modules"><span class="project-module-chip">Jobs</span><span class="project-module-chip">Banking</span><span class="project-module-chip">Inventory</span></div>
+            <div class="project-meta"><span>3 modules</span><span>·</span><span>5 uur geleden</span></div>
+          </div>
+          <div class="project-card" onclick="startWizard()">
+            <div class="project-card-top"><div class="project-name">TestServer v2</div><span class="project-status status-draft">Concept</span></div>
+            <div class="project-modules"><span class="project-module-chip">Character</span><span class="project-module-chip">Voertuigen</span></div>
+            <div class="project-meta"><span>2 modules</span><span>·</span><span>1 week geleden</span></div>
+          </div>
+          <div class="new-project-card" onclick="startWizard()">
+            <div class="new-project-icon">+</div>
+            <div class="new-project-label">Nieuw framework starten</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PROJECTS TAB -->
+      <div id="tab-projects" class="dashboard-tab" style="display:none">
+        <div class="page-header">
+          <div><div class="page-title">Mijn projecten</div><div class="page-subtitle">Alle frameworks die je hebt gebouwd of gestart.</div></div>
+          <button class="btn btn-primary" onclick="startWizard()">+ Nieuw framework</button>
+        </div>
+        <div class="projects-grid">
+          <div class="project-card"><div class="project-card-top"><div class="project-name">NightCity RP</div><span class="project-status status-done">Klaar</span></div><div class="project-modules"><span class="project-module-chip">Jobs</span><span class="project-module-chip">Politie MDT</span><span class="project-module-chip">Housing</span><span class="project-module-chip">+3</span></div><div class="project-meta"><span>6 modules</span><span>·</span><span>2 dagen geleden</span></div></div>
+          <div class="project-card"><div class="project-card-top"><div class="project-name">SunCity Server</div><span class="project-status status-wip">In bewerking</span></div><div class="project-modules"><span class="project-module-chip">Jobs</span><span class="project-module-chip">Banking</span><span class="project-module-chip">Inventory</span></div><div class="project-meta"><span>3 modules</span><span>·</span><span>5 uur geleden</span></div></div>
+          <div class="project-card"><div class="project-card-top"><div class="project-name">TestServer v2</div><span class="project-status status-draft">Concept</span></div><div class="project-modules"><span class="project-module-chip">Character</span><span class="project-module-chip">Voertuigen</span></div><div class="project-meta"><span>2 modules</span><span>·</span><span>1 week geleden</span></div></div>
+          <div class="new-project-card" onclick="startWizard()"><div class="new-project-icon">+</div><div class="new-project-label">Nieuw framework starten</div></div>
+        </div>
+      </div>
+
+      <!-- BILLING TAB -->
+      <div id="tab-billing" class="dashboard-tab" style="display:none">
+        <div class="page-header"><div><div class="page-title">Abonnement</div><div class="page-subtitle">Beheer je plan en betaalmethode.</div></div></div>
+        <div class="dash-card" style="margin-bottom:16px;max-width:600px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+            <div><div style="font-size:18px;font-weight:700;font-family:'Syne',sans-serif">Pro Plan</div><div style="font-size:13px;color:var(--ink3)">Actief tot 13 april 2026</div></div>
+            <span class="project-status status-done">Actief</span>
+          </div>
+          <div class="summary-row"><span class="summary-key">Prijs</span><span class="summary-val">€19/maand</span></div>
+          <div class="summary-row"><span class="summary-key">Volgende betaling</span><span class="summary-val">13 april 2026</span></div>
+          <div class="summary-row"><span class="summary-key">Betaalmethode</span><span class="summary-val">•••• •••• •••• 4242</span></div>
+          <div style="margin-top:20px;display:flex;gap:12px">
+            <button class="btn btn-outline" onclick="showToast('Betaalmethode aanpassen — Stripe integratie')">Betaalmethode aanpassen</button>
+            <button class="btn btn-outline" style="color:var(--red);border-color:var(--red)" onclick="showToast('Opzeggen — Stripe integratie')">Opzeggen</button>
+          </div>
+        </div>
+        <div style="max-width:600px">
+          <div style="font-size:15px;font-weight:600;margin-bottom:12px">Upgraden naar Studio?</div>
+          <div class="dash-card" style="background:var(--accent-light);border-color:rgba(37,99,235,0.2)">
+            <div style="font-size:14px;color:var(--ink2);margin-bottom:12px">Studio biedt whitelabel output, API toegang en team members voor €49/maand.</div>
+            <button class="btn btn-primary" onclick="showToast('Upgrade naar Studio — Stripe integratie')">Upgraden naar Studio — €49/mo</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- SETTINGS TAB -->
+      <div id="tab-settings" class="dashboard-tab" style="display:none">
+        <div class="page-header"><div><div class="page-title">Instellingen</div><div class="page-subtitle">Beheer je account en voorkeuren.</div></div></div>
+        <div class="config-section" style="max-width:600px">
+          <div class="config-section-title">👤 Profiel</div>
+          <div class="form-group"><label>Naam</label><input type="text" value="Jan de Vries" id="settings-name"></div>
+          <div class="form-group"><label>E-mailadres</label><input type="email" value="jan@nightcityrp.nl"></div>
+          <button class="btn btn-primary" style="margin-top:8px" onclick="showToast('✓ Profiel opgeslagen')">Opslaan</button>
+        </div>
+        <div class="config-section" style="max-width:600px;margin-top:16px">
+          <div class="config-section-title">🔔 Notificaties</div>
+          <div class="toggle-row"><span class="toggle-label">E-mail bij nieuw gegenereerd framework</span><label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label></div>
+          <div class="toggle-row"><span class="toggle-label">Maandelijkse facturering herinnering</span><label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label></div>
+          <div class="toggle-row"><span class="toggle-label">Module updates en nieuwe features</span><label class="toggle"><input type="checkbox"><span class="toggle-slider"></span></label></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- =================== WIZARD =================== -->
+<div class="page" id="page-wizard">
+  <nav class="nav">
+    <span class="nav-logo"><div class="dot"></div> FrameForge</span>
+    <button class="btn btn-outline" onclick="showPage('page-dashboard')">← Terug naar dashboard</button>
+  </nav>
+  <div class="wizard-page">
+    <div class="wizard-header">
+      <div class="wizard-progress">
+        <div class="wp-step"><div class="wp-dot active" id="wp1">1</div><span class="wp-label active" id="wl1">Server info</span></div>
+        <div class="wp-line" id="wline1"></div>
+        <div class="wp-step"><div class="wp-dot inactive" id="wp2">2</div><span class="wp-label inactive" id="wl2">Modules</span></div>
+        <div class="wp-line" id="wline2"></div>
+        <div class="wp-step"><div class="wp-dot inactive" id="wp3">3</div><span class="wp-label inactive" id="wl3">Configuratie</span></div>
+        <div class="wp-line" id="wline3"></div>
+        <div class="wp-step"><div class="wp-dot inactive" id="wp4">4</div><span class="wp-label inactive" id="wl4">Genereren</span></div>
+        <div class="wp-line" id="wline4"></div>
+        <div class="wp-step"><div class="wp-dot inactive" id="wp5">5</div><span class="wp-label inactive" id="wl5">Download</span></div>
+      </div>
+    </div>
+
+    <div class="wizard-body">
+
+      <!-- STEP 1: Server info -->
+      <div class="wizard-step active" id="step-1">
+        <div class="step-title">Vertel ons over je server</div>
+        <div class="step-desc">Geef je project een naam en kies het type roleplay server. Dit bepaalt de standaard instellingen voor de gegenereerde modules.</div>
+        <div class="config-section">
+          <div class="config-grid">
+            <div class="config-item"><div class="config-label">Servernaam</div><input type="text" placeholder="NightCity RP" id="server-name"></div>
+            <div class="config-item"><div class="config-label">Server type</div>
+              <select id="server-type">
+                <option>Realistisch RP</option>
+                <option>Semi-realistisch</option>
+                <option>Casual / Fun</option>
+                <option>Whitelisted</option>
+              </select>
+            </div>
+            <div class="config-item"><div class="config-label">Database naam</div><input type="text" placeholder="fivem_db" id="db-name"></div>
+            <div class="config-item"><div class="config-label">Max players</div>
+              <select>
+                <option>32</option><option>64</option><option selected>128</option><option>256</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="config-section">
+          <div class="config-section-title">⚙️ Opties</div>
+          <div class="toggle-row"><span class="toggle-label">Discord webhook logging inschakelen</span><label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label></div>
+          <div class="toggle-row"><span class="toggle-label">Anti-cheat basis integratie</span><label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label></div>
+          <div class="toggle-row"><span class="toggle-label">Multi-character systeem</span><label class="toggle"><input type="checkbox"><span class="toggle-slider"></span></label></div>
+        </div>
+        <div class="wizard-footer">
+          <span class="step-counter">Stap 1 van 5</span>
+          <div class="wizard-nav"><button class="btn btn-primary" onclick="nextStep(2)">Volgende: Modules →</button></div>
+        </div>
+      </div>
+
+      <!-- STEP 2: Module select -->
+      <div class="wizard-step" id="step-2">
+        <div class="step-title">Welke modules wil je?</div>
+        <div class="step-desc">Selecteer alle modules die je framework nodig heeft. Elke module genereert een volledig zelfstandig Lua pakket.</div>
+        <div class="modules-select-grid">
+          <div class="module-select-card selected" onclick="toggleModule(this)"><div class="ms-emoji">👔</div><div class="ms-name">Job Systeem</div><div class="ms-lines">~420 regels</div></div>
+          <div class="module-select-card selected" onclick="toggleModule(this)"><div class="ms-emoji">🚗</div><div class="ms-name">Voertuig Beheer</div><div class="ms-lines">~380 regels</div></div>
+          <div class="module-select-card selected" onclick="toggleModule(this)"><div class="ms-emoji">🎒</div><div class="ms-name">Inventory</div><div class="ms-lines">~560 regels</div></div>
+          <div class="module-select-card selected" onclick="toggleModule(this)"><div class="ms-emoji">💰</div><div class="ms-name">Economie</div><div class="ms-lines">~290 regels</div></div>
+          <div class="module-select-card selected" onclick="toggleModule(this)"><div class="ms-emoji">🚔</div><div class="ms-name">Politie MDT</div><div class="ms-lines">~680 regels</div></div>
+          <div class="module-select-card" onclick="toggleModule(this)"><div class="ms-emoji">💀</div><div class="ms-name">Crimineel Systeem</div><div class="ms-lines">~500 regels</div></div>
+          <div class="module-select-card" onclick="toggleModule(this)"><div class="ms-emoji">🏠</div><div class="ms-name">Housing</div><div class="ms-lines">~450 regels</div></div>
+          <div class="module-select-card selected" onclick="toggleModule(this)"><div class="ms-emoji">👤</div><div class="ms-name">Character Creation</div><div class="ms-lines">~340 regels</div></div>
+        </div>
+        <div class="wizard-footer">
+          <span class="step-counter">Stap 2 van 5</span>
+          <div class="wizard-nav">
+            <button class="btn btn-outline" onclick="nextStep(1)">← Terug</button>
+            <button class="btn btn-primary" onclick="nextStep(3)">Volgende: Configuratie →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 3: Config -->
+      <div class="wizard-step" id="step-3">
+        <div class="step-title">Configureer je modules</div>
+        <div class="step-desc">Stel de details in voor elke geselecteerde module. Dit wordt direct in de config bestanden gegenereerd.</div>
+        <div class="config-section">
+          <div class="config-section-title">👔 Job Systeem</div>
+          <div class="config-grid">
+            <div class="config-item"><div class="config-label">Standaard job</div><input type="text" placeholder="unemployed"></div>
+            <div class="config-item"><div class="config-label">Max grades per job</div><select><option>5</option><option selected>10</option><option>15</option></select></div>
+          </div>
+          <div class="toggle-row" style="margin-top:12px"><span class="toggle-label">Salary timer inschakelen</span><label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label></div>
+        </div>
+        <div class="config-section">
+          <div class="config-section-title">🚗 Voertuig Beheer</div>
+          <div class="config-grid">
+            <div class="config-item"><div class="config-label">Garage type</div><select><option>Public garages</option><option selected>Job garages + public</option><option>Volledig custom</option></select></div>
+            <div class="config-item"><div class="config-label">Max voertuigen per speler</div><select><option>3</option><option selected>5</option><option>10</option><option>Onbeperkt</option></select></div>
+          </div>
+        </div>
+        <div class="config-section">
+          <div class="config-section-title">💰 Economie</div>
+          <div class="config-grid">
+            <div class="config-item"><div class="config-label">Valuta naam</div><input type="text" placeholder="Dollar" value="Dollar"></div>
+            <div class="config-item"><div class="config-label">Startkapitaal</div><input type="text" placeholder="5000"></div>
+          </div>
+          <div class="toggle-row" style="margin-top:12px"><span class="toggle-label">Dirty money systeem</span><label class="toggle"><input type="checkbox"><span class="toggle-slider"></span></label></div>
+        </div>
+        <div class="wizard-footer">
+          <span class="step-counter">Stap 3 van 5</span>
+          <div class="wizard-nav">
+            <button class="btn btn-outline" onclick="nextStep(2)">← Terug</button>
+            <button class="btn btn-primary" onclick="nextStep(4)">Genereren →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 4: Generate -->
+      <div class="wizard-step" id="step-4">
+        <div class="step-title">Framework genereren</div>
+        <div class="step-desc">Klik op genereren en onze AI schrijft je volledige FiveM framework. Dit duurt ongeveer 10–20 seconden.</div>
+        <div class="generate-box">
+          <div class="generate-header">
+            <div class="generate-title">🧠 AI Code Generator <span class="gen-badge">Powered by Claude</span></div>
+            <button class="copy-btn" onclick="copyCode()" id="copy-btn" style="display:none">Kopieer</button>
+          </div>
+          <div class="generate-body" id="gen-body">
+            <div class="gen-placeholder" id="gen-placeholder">
+              <div class="gen-spinner" id="gen-spinner"></div>
+              <div class="gen-idle-text" id="gen-idle-text">Klik op "Genereer framework" om te starten</div>
+              <div class="gen-idle-sub" id="gen-idle-sub">De AI schrijft alle Lua bestanden op basis van je configuratie</div>
+            </div>
+            <div class="gen-code" id="gen-code" style="display:none"></div>
+          </div>
+          <div class="generate-footer">
+            <span class="gen-file-label" id="gen-file-label">framework/init.lua</span>
+            <span class="gen-file-label" id="gen-token-count"></span>
+          </div>
+        </div>
+        <div class="wizard-footer">
+          <span class="step-counter">Stap 4 van 5</span>
+          <div class="wizard-nav">
+            <button class="btn btn-outline" onclick="nextStep(3)" id="btn-back-gen">← Terug</button>
+            <button class="btn btn-primary" onclick="generateFramework()" id="btn-generate">⚡ Genereer framework</button>
+            <button class="btn btn-primary" onclick="nextStep(5)" id="btn-to-download" style="display:none">Doorgaan naar download →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 5: Download -->
+      <div class="wizard-step" id="step-5">
+        <div class="step-title">Je framework is klaar! 🎉</div>
+        <div class="step-desc">Alles is gegenereerd en klaar om te downloaden. Voeg de bestanden toe aan je FiveM server resources map.</div>
+        <div class="summary-card">
+          <div class="summary-row"><span class="summary-key">Project naam</span><span class="summary-val" id="summary-name">NightCity RP</span></div>
+          <div class="summary-row"><span class="summary-key">Geselecteerde modules</span><span class="summary-val">5 modules</span></div>
+          <div class="summary-row"><span class="summary-key">Gegenereerde bestanden</span><span class="summary-val">24 bestanden</span></div>
+          <div class="summary-row"><span class="summary-key">Totaal regels Lua</span><span class="summary-val">~1.840 regels</span></div>
+          <div class="summary-row"><span class="summary-key">Framework versie</span><span class="summary-val">v1.0.0 — 13 mrt 2026</span></div>
+        </div>
+        <div class="download-box">
+          <div class="download-icon">📦</div>
+          <div class="download-title">Download je framework</div>
+          <div class="download-desc">Een ZIP bestand met alle Lua bestanden, config en installatie handleiding.</div>
+          <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+            <button class="btn btn-primary btn-lg" onclick="downloadFramework()">⬇ Download ZIP</button>
+            <button class="btn btn-outline btn-lg" onclick="showPage('page-dashboard');showToast('✓ Project opgeslagen in je dashboard')">Opslaan in dashboard</button>
+          </div>
+        </div>
+        <div class="wizard-footer">
+          <span class="step-counter">Klaar!</span>
+          <button class="btn btn-outline" onclick="showPage('page-dashboard')">Terug naar dashboard</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+// =================== STATE ===================
+let currentStep = 1;
+let userData = { name: '', email: '' };
+let generatedCode = '';
+
+// =================== NAVIGATION ===================
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+function switchTab(tabId, el) {
+  document.querySelectorAll('.dashboard-tab').forEach(t => t.style.display = 'none');
+  document.getElementById(tabId).style.display = 'block';
+  if (el) {
+    document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
+    el.classList.add('active');
+  }
+}
+
+function startWizard() {
+  currentStep = 1;
+  updateProgress(1);
+  document.querySelectorAll('.wizard-step').forEach(s => s.classList.remove('active'));
+  document.getElementById('step-1').classList.add('active');
+  document.getElementById('gen-code').style.display = 'none';
+  document.getElementById('gen-placeholder').style.display = 'flex';
+  document.getElementById('btn-generate').style.display = 'inline-flex';
+  document.getElementById('btn-to-download').style.display = 'none';
+  document.getElementById('copy-btn').style.display = 'none';
+  generatedCode = '';
+  showPage('page-wizard');
+}
+
+// =================== AUTH ===================
+function doLogin() {
+  const email = document.getElementById('login-email').value;
+  const password = document.getElementById('login-password').value;
+  if (!email || !password) { showToast('⚠ Vul alle velden in'); return; }
+  userData.name = email.split('@')[0];
+  userData.email = email;
+  updateUserDisplay();
+  showPage('page-dashboard');
+  showToast('✓ Ingelogd als ' + userData.name);
+}
+
+function doRegister() {
+  const name = document.getElementById('reg-name').value;
+  const email = document.getElementById('reg-email').value;
+  const password = document.getElementById('reg-password').value;
+  if (!name || !email || !password) { showToast('⚠ Vul alle velden in'); return; }
+  if (password.length < 8) { showToast('⚠ Wachtwoord min. 8 tekens'); return; }
+  userData.name = name;
+  userData.email = email;
+  updateUserDisplay();
+  showPage('page-dashboard');
+  showToast('✓ Account aangemaakt! Welkom, ' + name.split(' ')[0]);
+}
+
+function updateUserDisplay() {
+  const first = userData.name.charAt(0).toUpperCase();
+  document.getElementById('user-avatar').textContent = first;
+  document.getElementById('user-display-name').textContent = userData.name;
+  document.getElementById('welcome-title').textContent = 'Welkom terug, ' + userData.name.split(' ')[0] + ' 👋';
+  document.getElementById('summary-name').textContent = document.getElementById('server-name')?.value || 'Mijn Server';
+}
+
+// =================== WIZARD ===================
+function nextStep(step) {
+  document.querySelectorAll('.wizard-step').forEach(s => s.classList.remove('active'));
+  document.getElementById('step-' + step).classList.add('active');
+  currentStep = step;
+  updateProgress(step);
+  window.scrollTo(0, 0);
+}
+
+function updateProgress(step) {
+  for (let i = 1; i <= 5; i++) {
+    const dot = document.getElementById('wp' + i);
+    const label = document.getElementById('wl' + i);
+    if (i < step) {
+      dot.className = 'wp-dot done'; dot.textContent = '✓';
+      label.className = 'wp-label done';
+    } else if (i === step) {
+      dot.className = 'wp-dot active'; dot.textContent = i;
+      label.className = 'wp-label active';
+    } else {
+      dot.className = 'wp-dot inactive'; dot.textContent = i;
+      label.className = 'wp-label inactive';
+    }
+    if (i < 5) {
+      const line = document.getElementById('wline' + i);
+      line.className = 'wp-line' + (i < step ? ' done' : '');
+    }
+  }
+}
+
+function toggleModule(card) {
+  card.classList.toggle('selected');
+}
+
+// =================== AI GENERATOR ===================
+async function generateFramework() {
+  const serverName = document.getElementById('server-name')?.value || 'MijnServer';
+  const serverType = document.getElementById('server-type')?.value || 'Realistisch RP';
+  const dbName = document.getElementById('db-name')?.value || 'fivem_db';
+
+  const selected = [...document.querySelectorAll('.module-select-card.selected')].map(c => c.querySelector('.ms-name').textContent);
+  if (selected.length === 0) { showToast('⚠ Selecteer minstens 1 module'); return; }
+
+  // UI: loading state
+  document.getElementById('btn-generate').style.display = 'none';
+  document.getElementById('btn-back-gen').disabled = true;
+  document.getElementById('gen-spinner').classList.add('active');
+  document.getElementById('gen-idle-text').textContent = 'AI schrijft je framework...';
+  document.getElementById('gen-idle-sub').textContent = 'Modules: ' + selected.join(', ');
+  document.getElementById('gen-placeholder').style.display = 'flex';
+  document.getElementById('gen-code').style.display = 'none';
+
+  const prompt = `Je bent een FiveM Lua developer. Genereer een professioneel, productieklaar FiveM framework voor een server genaamd "${serverName}" (type: ${serverType}, database: ${dbName}).
+
+Genereer de volgende modules: ${selected.join(', ')}.
+
+Schrijf het volledige init.lua bestand van het framework dat alle modules laadt en configureert. Maak ook de config.lua en voor elke module een korte maar werkende implementatie.
+
+Gebruik de volgende structuur:
+1. config.lua - alle configuratie variabelen
+2. init.lua - framework bootstrap en module loader
+3. Voor elke module: modules/<naam>/client.lua en server.lua
+
+Schrijf echte, werkende Lua code met commentaar. Maak het professioneel en overzichtelijk.`;
+
+  try {
+const response = await fetch('/api/generate', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ prompt })
+});
+
+    const data = await response.json();
+    const text = data.content?.[0]?.text || 'Generatie mislukt.';
+
+    generatedCode = text;
+    document.getElementById('gen-placeholder').style.display = 'none';
+    document.getElementById('gen-code').style.display = 'block';
+    document.getElementById('gen-code').textContent = text;
+    document.getElementById('gen-token-count').textContent = '~' + Math.round(text.length / 4) + ' tokens';
+    document.getElementById('copy-btn').style.display = 'inline-block';
+    document.getElementById('btn-to-download').style.display = 'inline-flex';
+    document.getElementById('btn-back-gen').disabled = false;
+    showToast('✓ Framework gegenereerd!');
+
+  } catch (err) {
+    document.getElementById('gen-idle-text').textContent = 'Fout bij genereren';
+    document.getElementById('gen-idle-sub').textContent = err.message;
+    document.getElementById('btn-generate').style.display = 'inline-flex';
+    document.getElementById('btn-back-gen').disabled = false;
+    document.getElementById('gen-spinner').classList.remove('active');
+  }
+}
+
+function copyCode() {
+  navigator.clipboard.writeText(generatedCode).then(() => showToast('✓ Code gekopieerd!'));
+}
+
+function downloadFramework() {
+  if (!generatedCode) { showToast('⚠ Genereer eerst je framework'); return; }
+  const serverName = document.getElementById('server-name')?.value || 'framework';
+  const blob = new Blob([generatedCode], { type: 'text/plain' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = serverName.replace(/\s+/g, '_').toLowerCase() + '_framework.lua';
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast('✓ Framework gedownload!');
+}
+
+// =================== TOAST ===================
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+</script>
+</body>
+</html>
